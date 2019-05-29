@@ -16,7 +16,7 @@ variable "public_cidr_block" {
 }
 variable "private_cidr_block" {
   type = "list"
-  default = ["172.20.1.0/24","172.20.2.0/24"]
+  default = ["172.20.3.0/24","172.20.4.0/24"]
 }
 variable "azs" {
   type = "list"
