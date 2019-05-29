@@ -126,7 +126,6 @@ resource "aws_nat_gateway" "eks-nat" {
 
   depends_on = ["aws_internet_gateway.eks-igw"]
 }
-
 resource "aws_security_group" "eks_ssh_sg" {
   name        = "${var.security_group_name}-ssh"
   description = "sg-${var.security_group_description}"
@@ -139,6 +138,15 @@ resource "aws_security_group_rule" "ingress_rule_ssh" {
   protocol          = "tcp"
   cidr_blocks       = ["${element(var.inbound_rules_cluster[count.index], 0)}"]
   type              = "ingress"
+}
+resource "aws_security_group_rule" "egress_rule" {
+  count             = "${length(var.outbound_rules)}"
+  type              = "egress"
+  cidr_blocks       = ["${element(var.outbound_rules[count.index], 0)}"]
+  from_port         = "${element(var.outbound_rules[count.index], 1)}"
+  to_port           = "${element(var.outbound_rules[count.index], 2)}"
+  protocol          = "${element(var.outbound_rules[count.index], 3)}"
+  security_group_id = "${aws_security_group.eks_ssh_sg.id}"
 }
 resource "aws_security_group" "eks_cluster_sg" {
   name        = "cluster-${var.security_group_name}"

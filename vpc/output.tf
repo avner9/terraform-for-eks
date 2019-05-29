@@ -19,3 +19,13 @@ output "private_subnet_cidr_block" {
 output "nat_eip" {
   value = ["${aws_eip.eip.public_ip}"]
 }
+output "ssh_security_group" {
+  value = "${aws_security_group.eks_ssh_sg.id}"
+}
+output "nodes_security_group" {
+  value = "${aws_security_group.eks_nodes_sg.id}"
+}
+output "cluster_security_group" {
+  value = "${aws_security_group.eks_cluster_sg.id}"
+}
+
