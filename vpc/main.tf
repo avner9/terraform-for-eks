@@ -7,7 +7,7 @@ locals {
   )}"
 }
 resource "aws_vpc" "eks" {
-  cidr_block       = "${var.cidr}"
+  cidr_block       = "${var.cidr_block}"
   instance_tenancy = "${var.instance_tenancy}"
   enable_dns_hostnames = "${var.enable_dns_hostname}"
   enable_dns_support = "${var.enable_dns_support}"
@@ -30,10 +30,10 @@ resource "aws_internet_gateway" "eks-igw" {
   )}"
 }
 resource "aws_subnet" "public" {
-  count = "${length(var.public_subnets)}"
+  count = "${length(var.public_cidr_block)}"
 
   vpc_id            = "${aws_vpc.eks.id}"
-  cidr_block        = "${var.public_subnets[count.index]}"
+  cidr_block        = "${var.public_cidr_block[count.index]}"
   availability_zone = "${element(var.azs, count.index)}"
   map_public_ip_on_launch = "${var.map_public_ip_on_launch}"
   
@@ -46,10 +46,10 @@ resource "aws_subnet" "public" {
   )}"
 }
 resource "aws_subnet" "private" {
-  count = "${length(var.private_subnets)}"
+  count = "${length(var.private_cidr_block)}"
 
   vpc_id            = "${aws_vpc.eks.id}"
-  cidr_block        = "${var.private_subnets[count.index]}"
+  cidr_block        = "${var.private_cidr_block[count.index]}"
   availability_zone = "${element(var.azs, count.index)}"
 
   tags = "${merge(
@@ -60,7 +60,7 @@ resource "aws_subnet" "private" {
   )}"
 }
 resource "aws_route_table" "public" {
-  count  = "${length(var.public_subnets)}"
+  count  = "${length(var.public_cidr_block)}"
   vpc_id = "${aws_vpc.eks.id}"
 
   route = {
@@ -76,18 +76,18 @@ resource "aws_route_table" "public" {
   )}"
 }
 resource "aws_route_table_association" "public" {
-  count          = "${length(var.public_subnets)}"
+  count          = "${length(var.public_cidr_block)}"
 
   subnet_id      = "${element(aws_subnet.public.*.id, count.index)}"
   route_table_id = "${element(aws_route_table.public.*.id, count.index)}"
 }
 resource "aws_route_table" "private" {
-  count  = "${length(var.public_subnets)}"
+  count  = "${length(var.private_cidr_block)}"
   vpc_id = "${aws_vpc.eks.id}"
 
   route = {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = "${aws_nat_gateway.eks.id}"
+    nat_gateway_id = "${aws_nat_gateway.eks-nat.id}"
   }
 
   tags = "${merge(
@@ -98,7 +98,7 @@ resource "aws_route_table" "private" {
   )}"
 }
 resource "aws_route_table_association" "private" {
-  count          = "${length(var.public_subnets)}"
+  count          = "${length(var.private_cidr_block)}"
 
   subnet_id      = "${element(aws_subnet.private.*.id, count.index)}"
   route_table_id = "${element(aws_route_table.private.*.id, count.index)}"

@@ -1,8 +1,8 @@
 output "vpc_id" {
-  value = "${aws_vpc.main.id}"
+  value = "${aws_vpc.eks.id}"
 }
 output "vpc_cidr_block" {
-  value = "${aws_vpc.main.cidr_block}"
+  value = "${aws_vpc.eks.cidr_block}"
 }
 output "public_subnets" {
   value = ["${aws_subnet.public.*.id}"]

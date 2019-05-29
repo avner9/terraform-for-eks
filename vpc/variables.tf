@@ -10,13 +10,13 @@ variable "instance_tenancy" {
     type = "string"
   default = ""
 }
-variable "public_subnets" {
+variable "public_cidr_block" {
   type = "list"
-  default = []
+  default = ["",""]
 }
-variable "private_subnets" {
+variable "private_cidr_block" {
   type = "list"
-  default = []
+  default = ["",""]
 }
 variable "azs" {
   type = "list"
