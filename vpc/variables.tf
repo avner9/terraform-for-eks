@@ -40,3 +40,33 @@ variable "enable_s3_endpoint" {
 variable "enable_dynamodb_endpoint" {
   default     = false
 }
+variable "security_group_name" {
+  description = ""
+  default     = "eks"
+}
+variable "security_group_description" {
+  default = "Security Group managed by Terraform"
+}
+variable "inbound_rules_cluster" {
+  type = "map"
+
+  default = {
+    "0" = ["0.0.0.0/0", "80", "80", "TCP"]
+    "1" = ["0.0.0.0/0", "443", "443", "TCP"]
+  }
+}
+variable "inbound_rules_nodes" {
+  type = "map"
+
+  default = {
+    "0" = ["0.0.0.0/0", "80", "80", "TCP"]
+    "1" = ["0.0.0.0/0", "443", "443", "TCP"]
+  }
+}
+variable "outbound_rules" {
+  type = "map"
+
+  default = {
+    "0" = ["0.0.0.0/0", "0", "0", "-1"]
+  }
+}
