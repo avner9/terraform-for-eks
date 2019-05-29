@@ -8,7 +8,7 @@ locals {
 }
 resource "aws_vpc" "eks" {
   cidr_block       = "${var.cidr_block}"
-  instance_tenancy = "${var.instance_tenancy}"
+//  instance_tenancy = "${var.instance_tenancy}"
   enable_dns_hostnames = "${var.enable_dns_hostname}"
   enable_dns_support = "${var.enable_dns_support}"
 
@@ -41,7 +41,7 @@ resource "aws_subnet" "public" {
   tags = "${merge(
     local.common_tags,
     map(
-      "Name", "subnet-public-vpc-eks-${count.index + 1}"
+      "Name", "subnet-public-eks-${count.index + 1}"
     )
   )}"
 }
@@ -55,7 +55,7 @@ resource "aws_subnet" "private" {
   tags = "${merge(
     local.common_tags,
     map(
-      "Name", "subnet-private-vpc-eks-${count.index + 1}"
+      "Name", "subnet-private-eks-${count.index + 1}"
     )
   )}"
 }
@@ -117,11 +117,18 @@ resource "aws_nat_gateway" "eks-nat" {
   allocation_id = "${aws_eip.eip.id}"
   subnet_id = "${element(aws_subnet.public.*.id, count.index)}"
 
+  tags = "${merge(
+    local.common_tags,
+    map(
+      "Name", "nat gateway"
+    )
+  )}"
+
   depends_on = ["aws_internet_gateway.eks-igw"]
 }
 
 resource "aws_security_group" "eks_ssh_sg" {
-  name        = "${var.security_group_name}"
+  name        = "${var.security_group_name}-ssh"
   description = "sg-${var.security_group_description}"
   vpc_id      = "${aws_vpc.eks.id}"
 }

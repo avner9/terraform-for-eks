@@ -1,10 +1,10 @@
 variable "name" {
     type = "string"
-  default = ""
+  default = "eks"
 }
 variable "cidr_block" {
     type = "string"
-  default = ""
+  default = "172.20.0.0/16"
 }
 variable "instance_tenancy" {
     type = "string"
@@ -12,15 +12,15 @@ variable "instance_tenancy" {
 }
 variable "public_cidr_block" {
   type = "list"
-  default = ["",""]
+  default = ["172.20.1.0/24","172.20.2.0/24"]
 }
 variable "private_cidr_block" {
   type = "list"
-  default = ["",""]
+  default = ["172.20.1.0/24","172.20.2.0/24"]
 }
 variable "azs" {
   type = "list"
-  default = []
+  default = ["eu-west-1a","eu-west-1b"]
 }
 variable "enable_dns_hostname" {
   type = "string"
@@ -36,15 +36,15 @@ variable "map_public_ip_on_launch" {
 variable "enable_s3_endpoint" {
   default     = false
 }
-
 variable "enable_dynamodb_endpoint" {
   default     = false
 }
 variable "security_group_name" {
   description = ""
-  default     = "eks"
+  default     = "eks-sg"
 }
 variable "security_group_description" {
+  description = ""
   default = "Security Group managed by Terraform"
 }
 variable "inbound_rules_cluster" {
